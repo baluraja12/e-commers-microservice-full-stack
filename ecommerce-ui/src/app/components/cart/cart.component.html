@@ -1,0 +1,48 @@
+<h2>Shopping Cart</h2>
+
+<div *ngIf="cartItems.length === 0" class="alert alert-info">
+  Your cart is empty. <a routerLink="/products">Browse products</a>
+</div>
+
+<div *ngIf="cartItems.length > 0">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of cartItems">
+        <td>{{item.product.name}}</td>
+        <td>₹{{item.product.price}}</td>
+        <td>
+          <div class="input-group" style="max-width: 140px;">
+            <button class="btn btn-outline-secondary btn-sm" (click)="decreaseQty(item)">-</button>
+            <input type="text" class="form-control form-control-sm text-center" [value]="item.quantity" readonly>
+            <button class="btn btn-outline-secondary btn-sm" (click)="increaseQty(item)">+</button>
+          </div>
+        </td>
+        <td>₹{{(item.product.price * item.quantity).toFixed(2)}}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="removeItem(item)">Remove</button>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="3" class="text-end">Total:</th>
+        <th>₹{{total.toFixed(2)}}</th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="d-flex justify-content-between">
+    <a class="btn btn-outline-secondary" routerLink="/products">Continue Shopping</a>
+    <button class="btn btn-success" (click)="checkout()">Proceed to Checkout</button>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Products</h2>
+  </div>
+</div>
+
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status"></div>
+  <p class="mt-2">Loading products...</p>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col" *ngFor="let product of products">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">{{product.name}}</h5>
+        <p class="card-text text-muted">{{product.description || 'No description'}}</p>
+        <h6 class="text-primary">₹{{product.price}}</h6>
+        <span class="badge" [ngClass]="product.stockQuantity > 0 ? 'bg-success' : 'bg-danger'">
+          {{product.stockQuantity > 0 ? 'In Stock (' + product.stockQuantity + ')' : 'Out of Stock'}}
+        </span>
+      </div>
+      <div class="card-footer bg-transparent">
+        <div class="d-flex justify-content-between align-items-center">
+          <a class="btn btn-outline-primary btn-sm" [routerLink]="['/products', product.id]">View</a>
+          <button class="btn btn-primary btn-sm" 
+                  (click)="addToCart(product)" 
+                  [disabled]="product.stockQuantity === 0">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!loading && products.length === 0" class="text-center py-5 text-muted">
+  <h4>No products available</h4>
+</div>
