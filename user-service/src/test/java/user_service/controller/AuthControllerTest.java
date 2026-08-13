@@ -12,11 +12,13 @@ import user_service.entity.User;
 import user_service.service.UserService;
 import user_service.util.JwtUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -50,7 +52,6 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should register user successfully")
     void testRegisterSuccess() {
-        // Arrange
         User newUser = new User();
         newUser.setUsername("newuser");
         newUser.setEmail("new@example.com");
@@ -64,10 +65,8 @@ class AuthControllerTest {
         when(passwordEncoder.encode("plainpassword")).thenReturn("$2a$10$encoded_password_hash");
         when(userService.createUser(any(User.class))).thenReturn(createdUser);
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.register(newUser);
 
-        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("User registered successfully", response.getBody().get("message"));
@@ -78,16 +77,13 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should return error when password is null")
     void testRegisterPasswordNull() {
-        // Arrange
         User newUser = new User();
         newUser.setUsername("newuser");
         newUser.setEmail("new@example.com");
         newUser.setPassword(null);
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.register(newUser);
 
-        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Password is required", response.getBody().get("error"));
         verify(userService, never()).createUser(any(User.class));
@@ -96,16 +92,13 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should return error when password is blank")
     void testRegisterPasswordBlank() {
-        // Arrange
         User newUser = new User();
         newUser.setUsername("newuser");
         newUser.setEmail("new@example.com");
-        newUser.setPassword("   ");
+        newUser.setPassword(" ");
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.register(newUser);
 
-        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Password is required", response.getBody().get("error"));
         verify(userService, never()).createUser(any(User.class));
@@ -114,20 +107,16 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should login successfully with valid credentials")
     void testLoginSuccess() {
-        // Arrange
-        Map<String, String> credentials = Map.of(
-                "username", "testuser",
-                "password", "plainpassword"
-        );
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("username", "testuser");
+        credentials.put("password", "plainpassword");
 
         when(userService.getUserByUsername("testuser")).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches("plainpassword", "$2a$10$encoded_password_hash")).thenReturn(true);
         when(jwtUtil.generateToken(1L, "testuser")).thenReturn("jwt_token_here");
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.login(credentials);
 
-        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("jwt_token_here", response.getBody().get("token"));
@@ -139,18 +128,14 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should return 401 when user not found")
     void testLoginUserNotFound() {
-        // Arrange
-        Map<String, String> credentials = Map.of(
-                "username", "nonexistent",
-                "password", "password"
-        );
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("username", "nonexistent");
+        credentials.put("password", "password");
 
         when(userService.getUserByUsername("nonexistent")).thenReturn(Optional.empty());
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.login(credentials);
 
-        // Assert
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertEquals("Invalid username or password", response.getBody().get("error"));
         verify(jwtUtil, never()).generateToken(anyLong(), anyString());
@@ -159,19 +144,15 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should return 401 when password is incorrect")
     void testLoginInvalidPassword() {
-        // Arrange
-        Map<String, String> credentials = Map.of(
-                "username", "testuser",
-                "password", "wrongpassword"
-        );
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("username", "testuser");
+        credentials.put("password", "wrongpassword");
 
         when(userService.getUserByUsername("testuser")).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches("wrongpassword", "$2a$10$encoded_password_hash")).thenReturn(false);
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.login(credentials);
 
-        // Assert
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertEquals("Invalid username or password", response.getBody().get("error"));
         verify(jwtUtil, never()).generateToken(anyLong(), anyString());
@@ -180,15 +161,11 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should return error when username is null")
     void testLoginUsernameNull() {
-        // Arrange
-        Map<String, String> credentials = Map.of(
-                "password", "password"
-        );
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("password", "password");
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.login(credentials);
 
-        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Username and password are required", response.getBody().get("error"));
         verify(userService, never()).getUserByUsername(anyString());
@@ -197,15 +174,11 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should return error when password is null")
     void testLoginPasswordNull() {
-        // Arrange
-        Map<String, String> credentials = Map.of(
-                "username", "testuser"
-        );
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("username", "testuser");
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.login(credentials);
 
-        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Username and password are required", response.getBody().get("error"));
         verify(userService, never()).getUserByUsername(anyString());
@@ -214,16 +187,12 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should return error when username is blank")
     void testLoginUsernameBlank() {
-        // Arrange
-        Map<String, String> credentials = Map.of(
-                "username", "   ",
-                "password", "password"
-        );
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("username", " ");
+        credentials.put("password", "password");
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.login(credentials);
 
-        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Username and password are required", response.getBody().get("error"));
         verify(userService, never()).getUserByUsername(anyString());
@@ -232,16 +201,12 @@ class AuthControllerTest {
     @Test
     @DisplayName("Should return error when password is blank")
     void testLoginPasswordBlank() {
-        // Arrange
-        Map<String, String> credentials = Map.of(
-                "username", "testuser",
-                "password", "   "
-        );
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("username", "testuser");
+        credentials.put("password", " ");
 
-        // Act
         ResponseEntity<Map<String, Object>> response = authController.login(credentials);
 
-        // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Username and password are required", response.getBody().get("error"));
         verify(userService, never()).getUserByUsername(anyString());

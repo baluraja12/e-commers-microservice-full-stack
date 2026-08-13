@@ -9,6 +9,7 @@ import user_service.entity.User;
 import user_service.service.UserService;
 import user_service.util.JwtUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -52,11 +53,10 @@ public class AuthController {
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .map(user -> {
                     String token = jwtUtil.generateToken(user.getId(), user.getUsername());
-                    Map<String, Object> response = Map.of(
-                            "token", token,
-                            "userId", user.getId(),
-                            "username", user.getUsername()
-                    );
+                    Map<String, Object> response = new HashMap<>();
+                                       response.put("token", token);
+                               response.put("userId", user.getId());
+                              response.put("username", user.getUsername());
                     return ResponseEntity.ok(response);
                 })
                 .orElseGet(() -> ResponseEntity.status(401).body(Map.of(

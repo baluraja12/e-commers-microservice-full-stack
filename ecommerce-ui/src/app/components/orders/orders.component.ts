@@ -24,13 +24,14 @@ export class OrdersComponent implements OnInit {
   loadOrders(): void {
     this.loading = true;
     this.orderService.getMyOrders().subscribe({
-      next: (data) => {
+      next: (data: Order[]) => {
         this.orders = data;
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: Error) => {
         this.error = 'Failed to load orders.';
         this.loading = false;
+        console.error(err);
       }
     });
   }
