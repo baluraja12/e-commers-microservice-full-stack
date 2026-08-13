@@ -10,15 +10,17 @@ import java.util.Date;
 public class JwtUtil {
 
     private static final String SECRET_KEY = "my-super-secret-key-my-super-secret-key";
+   
+   
     private static final long EXPIRATION_MS = 86400000; // 24 hours
-
-    public String generateToken(Long userId, String username) {
-        return Jwts.builder()
-                .setSubject(userId.toString())
-                .claim("username", username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
-                .compact();
-    }
+public String generateToken(Long userId, String username) {
+    return Jwts.builder()
+        .setSubject(userId.toString())
+        .claim("username", username)
+        .claim("role", "USER")  // <-- ADD THIS LINE
+        .setIssuedAt(new Date())
+        .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+        .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
+        .compact();
+}
 }

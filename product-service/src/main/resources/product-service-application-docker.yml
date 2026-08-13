@@ -10,7 +10,7 @@ spring:
     url: jdbc:mysql://mysql:3306/productdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: ${MYSQL_ROOT_PASSWORD:Balu@}
+    password: ${MYSQL_ROOT_PASSWORD:Balu@1998}
   jpa:
     hibernate:
       ddl-auto: validate
