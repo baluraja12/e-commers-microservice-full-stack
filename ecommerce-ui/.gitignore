@@ -42,3 +42,34 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+coverage/
+
+# Java
+target/
+*.jar
+*.war
+*.zip
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Secrets
+.env
+*.env
+!*.env.template
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker data
+mysql_data/
+grafana_data/
+es_data/
