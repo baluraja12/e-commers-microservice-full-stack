@@ -3,11 +3,11 @@ server:
 
 spring:
   application:
-    name: product-service
+    name: User-service
   config:
     import: optional:configserver:http://config-server:8888
   datasource:
-    url: jdbc:mysql://mysql:3306/productdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://mysql:3306/userdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${MYSQL_ROOT_PASSWORD:Balu@1998}

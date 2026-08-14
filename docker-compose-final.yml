@@ -39,23 +39,6 @@ services:
     networks:
       - ecommerce-net
 
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    ports:
-      - "3307:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
-      MYSQL_DATABASE: ecommerce
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - ecommerce-net
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -192,7 +175,7 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/productdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD:-changeme}
+      - SPRING_DATASOURCE_PASSWORD=Balu@1998
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       mysql:
@@ -216,7 +199,7 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/orderdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD:-changeme}
+      - SPRING_DATASOURCE_PASSWORD=Balu@1998
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       mysql:
@@ -240,7 +223,7 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/userdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD:-changeme}
+      - SPRING_DATASOURCE_PASSWORD=Balu@1998
       - JWT_SECRET=${JWT_SECRET:-my-super-secret-key-my-super-secret-key}
     depends_on:
       mysql:
