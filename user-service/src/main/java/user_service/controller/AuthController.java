@@ -1,3 +1,4 @@
+// FIXED AuthController.java
 package user_service.controller;
 
 import jakarta.validation.Valid;
@@ -54,13 +55,15 @@ public class AuthController {
                 .map(user -> {
                     String token = jwtUtil.generateToken(user.getId(), user.getUsername());
                     Map<String, Object> response = new HashMap<>();
-                                       response.put("token", token);
-                               response.put("userId", user.getId());
-                              response.put("username", user.getUsername());
+                    response.put("token", token);
+                    response.put("userId", user.getId());
+                    response.put("username", user.getUsername());
                     return ResponseEntity.ok(response);
                 })
-                .orElseGet(() -> ResponseEntity.status(401).body(Map.of(
-                        "error", "Invalid username or password"
-                )));
+                .orElseGet(() -> {
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("error", "Invalid username or password");
+                    return ResponseEntity.status(401).body(errorResponse);
+                });
     }
 }

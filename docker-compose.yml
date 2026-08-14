@@ -40,23 +40,23 @@ services:
       - ecommerce-net
 
   mysql:
-    image: mysql:8.0
-    container_name: mysql
-    ports:
-      - "3307:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
-      MYSQL_DATABASE: ecommerce
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - ecommerce-net
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${MYSQL_ROOT_PASSWORD:-changeme} || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
+  image: mysql:8.0
+  container_name: mysql
+  ports:
+    - "3307:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+    MYSQL_DATABASE: ecommerce
+  volumes:
+    - mysql_data:/var/lib/mysql
+  networks:
+    - ecommerce-net
+  healthcheck:
+    test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${MYSQL_ROOT_PASSWORD:-changeme} || exit 1"]
+    interval: 10s
+    timeout: 5s
+    retries: 10
+    start_period: 30s
 
   zipkin:
     image: openzipkin/zipkin:latest

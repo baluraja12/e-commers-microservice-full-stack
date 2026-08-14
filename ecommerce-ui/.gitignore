@@ -44,3 +44,12 @@ coverage/
 mysql_data/
 grafana_data/
 es_data/
+
+.env
+.idea/
+.vscode/
+build.log
+*/target/
+*/.mvn/
+*/mvnw
+*/mvnw.cmd

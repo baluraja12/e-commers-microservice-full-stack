@@ -4,126 +4,27 @@ server:
 spring:
   application:
     name: api-gateway
+  config:
+    import: "optional:configserver:"   # <-- ADD THIS LINE
   cloud:
+    config:
+      uri: http://localhost:8888       # <-- ADD THIS LINE (points to your running Config Server)
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "http://localhost:4200"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-            allowCredentials: true
       routes:
         - id: product-service
           uri: lb://product-service
           predicates:
-            - Path=/api/products/**
-          filters:
-            - StripPrefix=1
-            - name: CircuitBreaker
-              args:
-                name: product-service-cb
-                fallbackUri: forward:/fallback/product
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 2
-                redis-rate-limiter.burstCapacity: 3
-                key-resolver: "#{@userKeyResolver}"
-
+            - Path=/products/**
         - id: order-service
           uri: lb://order-service
           predicates:
-            - Path=/api/orders/**
-          filters:
-            - StripPrefix=1
-            - name: CircuitBreaker
-              args:
-                name: order-service-cb
-                fallbackUri: forward:/fallback/order
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 2
-                redis-rate-limiter.burstCapacity: 3
-                key-resolver: "#{@userKeyResolver}"
-
+            - Path=/orders/**
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/api/users/**
-          filters:
-            - StripPrefix=1
-            - name: CircuitBreaker
-              args:
-                name: user-service-cb
-                fallbackUri: forward:/fallback/user
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 2
-                redis-rate-limiter.burstCapacity: 3
-                key-resolver: "#{@userKeyResolver}"
-
-resilience4j:
-  circuit breaker:
-    configs:
-      default:
-        slidingWindowSize: 10
-        permittedNumberOfCallsInHalfOpenState: 3
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10s
-        slowCallDurationThreshold: 3s
-        slowCallRateThreshold: 50
-  time limiter:
-    configs:
-      default:
-        timeoutDuration: 5s
+            - Path=/users/**
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  Zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
-  endpoints:
-    web:
-          exposure:
-            include: health,info,metrics,prometheus
-  endpoint:
-    health:
-          show-details: always
-          prometheus:
-            enabled: true
-  metrics:
-    export:
-          prometheus:
-            enabled: true
-  zipkin:
-    tracing:
-          endpoint: http://localhost:9411/api/v2/spans
-
-endpoints:
-  web:
-    exposure:
-      include: health,info,metrics
-logging:
-  pattern:
-    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
-
-  cloud:
-    gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "http://localhost:4200"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-            allowCredentials: true
+      defaultZone: http://localhost:8761/eureka

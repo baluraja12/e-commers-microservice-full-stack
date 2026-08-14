@@ -133,7 +133,7 @@ services:
       dockerfile: Dockerfile
     container_name: eureka-server
     ports:
-      - "18761:8761"
+      - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
