@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Infrastructure
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
@@ -9,7 +8,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - "2181:2181"
+      - ""2181:2181""
     networks:
       - ecommerce-net
 
@@ -19,8 +18,8 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"
-      - "29092:29092"
+      - ""9092:9092""
+      - ""29092:29092""
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -35,34 +34,39 @@ services:
     image: redis:7-alpine
     container_name: redis
     ports:
-      - "6379:6379"
+      - ""6379:6379""
     networks:
       - ecommerce-net
+    healthcheck:
+      test: [""CMD"", ""redis-cli"", ""ping""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   mysql:
-  image: mysql:8.0
-  container_name: mysql
-  ports:
-    - "3307:3306"
-  environment:
-    MYSQL_ROOT_PASSWORD: Balu@1998
-    MYSQL_DATABASE: ecommerce
-  volumes:
-    - mysql_data:/var/lib/mysql
-  networks:
-    - ecommerce-net
-  healthcheck:
-    test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${MYSQL_ROOT_PASSWORD:-changeme} || exit 1"]
-    interval: 10s
-    timeout: 5s
-    retries: 10
-    start_period: 30s
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - ""3307:3306""
+    environment:
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE: ecommerce
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ecommerce-net
+    healthcheck:
+      test: [""CMD-SHELL"", ""mysqladmin ping -h localhost -p || exit 1""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   zipkin:
     image: openzipkin/zipkin:latest
     container_name: zipkin
     ports:
-      - "9411:9411"
+      - ""9411:9411""
     networks:
       - ecommerce-net
 
@@ -70,7 +74,7 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
-      - "9090:9090"
+      - ""9090:9090""
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
@@ -80,10 +84,10 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3000:3000"
+      - ""3000:3000""
     environment:
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_SECURITY_ADMIN_USER: 
+      GF_SECURITY_ADMIN_PASSWORD: 
     volumes:
       - grafana_data:/var/lib/grafana
     networks:
@@ -94,14 +98,19 @@ services:
     container_name: elasticsearch
     environment:
       discovery.type: single-node
-      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: ""-Xms512m -Xmx512m""
+      xpack.security.enabled: ""false""
     ports:
-      - "9200:9200"
+      - ""9200:9200""
     volumes:
       - es_data:/usr/share/elasticsearch/data
     networks:
       - ecommerce-net
+    healthcheck:
+      test: [""CMD-SHELL"", ""curl -f http://localhost:9200/_cluster/health || exit 1""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.17.0
@@ -109,9 +118,10 @@ services:
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     ports:
-      - "5000:5000"
+      - ""5000:5000""
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - ecommerce-net
 
@@ -119,24 +129,24 @@ services:
     image: docker.elastic.co/kibana/kibana:7.17.0
     container_name: kibana
     ports:
-      - "5601:5601"
+      - ""5601:5601""
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - ecommerce-net
 
-  # Microservices - Config Server FIRST (no dependencies)
   config-server:
     build: ./config-server
     container_name: config-server
     ports:
-      - "8888:8888"
+      - ""8888:8888""
     environment:
       SPRING_PROFILES_ACTIVE: docker
     healthcheck:
-      test: ["CMD-SHELL", "bash -c 'cat < /dev/null > /dev/tcp/localhost/8888'"]
+      test: [""CMD-SHELL"", ""bash -c 'cat < /dev/null > /dev/tcp/localhost/8888'""]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -144,19 +154,18 @@ services:
     networks:
       - ecommerce-net
 
-  # Eureka Server depends on Config Server
   eureka-server:
     build: ./eureka-server
     container_name: eureka-server
     ports:
-      - "8761:8761"
+      - ""8761:8761""
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CLOUD_CONFIG_URI: http://config-server:8888
-      EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
-      EUREKA_CLIENT_FETCH_REGISTRY: "false"
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: ""false""
+      EUREKA_CLIENT_FETCH_REGISTRY: ""false""
     healthcheck:
-      test: ["CMD-SHELL", "bash -c 'cat < /dev/null > /dev/tcp/localhost/8761'"]
+      test: [""CMD-SHELL"", ""bash -c 'cat < /dev/null > /dev/tcp/localhost/8761'""]
       interval: 30s
       timeout: 10s
       retries: 15
@@ -171,17 +180,20 @@ services:
     build: ./api-gateway
     container_name: api-gateway
     ports:
-      - "8080:8080"
+      - ""8080:8080""
     environment:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka
-      JWT_SECRET: ${JWT_SECRET:-my-super-secret-key-my-super-secret-key}
+      JWT_SECRET: 
       REDIS_HOST: redis
       REDIS_PORT: 6379
     depends_on:
-      - redis
-      - eureka-server
-      - config-server
+      redis:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
     networks:
       - ecommerce-net
 
@@ -189,13 +201,13 @@ services:
     build: ./product-service
     container_name: product-service
     ports:
-      - "8081:8081"
+      - ""8081:8081""
     environment:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/productdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Balu@1998
+      SPRING_DATASOURCE_PASSWORD: 
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     depends_on:
       mysql:
@@ -211,13 +223,13 @@ services:
     build: ./order-service
     container_name: order-service
     ports:
-      - "8082:8082"
+      - ""8082:8082""
     environment:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/orderdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Balu@1998
+      SPRING_DATASOURCE_PASSWORD: 
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     depends_on:
       mysql:
@@ -233,19 +245,40 @@ services:
     build: ./user-service
     container_name: user-service
     ports:
-      - "8083:8083"
+      - ""8083:8083""
     environment:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/userdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Balu@1998
-      JWT_SECRET: ${JWT_SECRET:-my-super-secret-key-my-super-secret-key}
+      SPRING_DATASOURCE_PASSWORD: 
+      JWT_SECRET: 
     depends_on:
       mysql:
         condition: service_healthy
       eureka-server:
         condition: service_healthy
+    networks:
+      - ecommerce-net
+
+  cart-service:
+    build: ./cart-service
+    container_name: cart-service
+    ports:
+      - ""8084:8084""
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    depends_on:
+      redis:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - ecommerce-net
 
