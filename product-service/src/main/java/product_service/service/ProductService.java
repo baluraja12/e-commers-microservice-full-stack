@@ -33,13 +33,14 @@ public class ProductService {
     public Product updateProduct(Long id, Product productDetails) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-        
+
         product.setName(productDetails.getName());
         product.setDescription(productDetails.getDescription());
         product.setPrice(productDetails.getPrice());
         product.setStockQuantity(productDetails.getStockQuantity());
         product.setCategory(productDetails.getCategory());
-        
+        product.setImageUrl(productDetails.getImageUrl()); // NEW
+
         return productRepository.save(product);
     }
 

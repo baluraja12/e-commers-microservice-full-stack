@@ -3,24 +3,19 @@
     {
       "name": "Default",
       "files": [
-        "product-service/src/main/resources/application.yaml",
-        ".vscode/changelists.json",
-        "order-service/src/main/resources/application.yaml",
-        "api-gateway/src/main/resources/application.yaml",
-        "api-gateway/src/main/java/api_gateway/filter/JwtAuthenticationFilter.java",
-        "user-service/src/main/java/user_service/exception/GlobalExceptionHandler",
-        "user-service/src/main/java/user_service/controller/AuthController.java",
-        "order-service/src/main/java/order_service/controller/OrderController.java",
-        "ecommerce-ui/src/app/components/register/register.component.ts",
-        "ecommerce-ui/src/app/components/register/register.component.html",
-        "ecommerce-ui/src/app/components/login/login.component.ts",
-        "ecommerce-ui/src/app/components/orders/orders.component.ts",
-        "ecommerce-ui/src/app/services/auth.service.ts",
         "ecommerce-ui/src/app/models/product.model.ts",
-        "user-service/src/main/java/user_service/config/SecurityConfig.java",
-        "ecommerce-ui/src/app/services/product.service.ts",
-        "ecommerce-ui/src/app/services/order.service.ts",
-        "ecommerce-ui/src/app/components/order-create/order-create.component.ts"
+        "ecommerce-ui/src/app/components/cart/cart.component.html",
+        "ecommerce-ui/src/app/components/product-detail/product-detail.component.html",
+        "ecommerce-ui/src/app/components/products/products.component.html",
+        "ecommerce-ui/src/styles.css",
+        "order-service/src/main/java/order_service/client/ProductDto.java",
+        "product-service/src/main/java/product_service/entity/Product.java",
+        "product-service/src/main/java/product_service/service/ProductService.java",
+        ".vscode/changelists.json",
+        "ecommerce-ui/src/app/components/cart/cart.component.ts",
+        "ecommerce-ui/src/app/components/products/products.component.ts",
+        "product-service/src/main/resources/application.yaml",
+        "ecommerce-ui/src/app/components/product-detail/product-detail.component.ts"
       ]
     }
   ],

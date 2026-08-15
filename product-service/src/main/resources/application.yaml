@@ -20,6 +20,8 @@ spring:
         format_sql: true
   kafka:
     bootstrap-servers: localhost:9092
+    listener:
+      auto-startup: false   # <-- THIS STOPS KAFKA FROM BLOCKING STARTUP
     consumer:
       group-id: product-service-group
       auto-offset-reset: earliest

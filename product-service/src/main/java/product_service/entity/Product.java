@@ -30,4 +30,7 @@ public class Product {
     private Integer stockQuantity;
 
     private String category;
+
+    // NEW: Product photo URL
+    private String imageUrl;
 }

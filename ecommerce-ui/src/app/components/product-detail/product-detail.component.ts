@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../services/product.service';
@@ -12,28 +12,43 @@ import { Product } from '../../models/product.model';
 })
 export class ProductDetailComponent implements OnInit {
   product: Product | null = null;
-  loading = false;
+  loading = true;
   error = '';
 
-  constructor(private route: ActivatedRoute, private productService: ProductService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : 0;
+    
+    if (id > 0) {
       this.loadProduct(id);
+    } else {
+      this.error = 'Invalid product ID.';
+      this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 
   loadProduct(id: number): void {
     this.loading = true;
+    this.error = '';
+    this.cdr.detectChanges();
+
     this.productService.getProductById(id).subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.product = data;
         this.loading = false;
+        this.cdr.detectChanges(); // FORCE UI UPDATE
       },
-      error: (err) => {
-        this.error = 'Product not found.';
+      error: (err: any) => {
+        this.error = 'Failed to load product.';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

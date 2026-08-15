@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Router } from '@angular/router';
-import { CartItem } from '../../models/order.model';
+import { Product } from '../../models/product.model';
+
+interface CartItem {
+  product: Product;
+  quantity: number;
+}
 
 @Component({
   selector: 'app-cart',
@@ -13,8 +17,6 @@ import { CartItem } from '../../models/order.model';
 export class CartComponent implements OnInit {
   cartItems: CartItem[] = [];
   total = 0;
-
-  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.loadCart();
@@ -29,22 +31,20 @@ export class CartComponent implements OnInit {
     this.total = this.cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
   }
 
-  increaseQty(item: CartItem): void {
-    if (item.quantity < item.product.stockQuantity) {
-      item.quantity++;
-      this.saveCart();
-    }
+  increaseQuantity(item: CartItem): void {
+    item.quantity++;
+    this.saveCart();
   }
 
-  decreaseQty(item: CartItem): void {
+  decreaseQuantity(item: CartItem): void {
     if (item.quantity > 1) {
       item.quantity--;
       this.saveCart();
     }
   }
 
-  removeItem(item: CartItem): void {
-    this.cartItems = this.cartItems.filter(i => i.product.id !== item.product.id);
+  removeItem(productId: number): void {
+    this.cartItems = this.cartItems.filter(item => item.product.id !== productId);
     this.saveCart();
   }
 
@@ -53,7 +53,9 @@ export class CartComponent implements OnInit {
     this.calculateTotal();
   }
 
-  checkout(): void {
-    this.router.navigate(['/order/create']);
+  clearCart(): void {
+    this.cartItems = [];
+    localStorage.removeItem('cart');
+    this.total = 0;
   }
 }

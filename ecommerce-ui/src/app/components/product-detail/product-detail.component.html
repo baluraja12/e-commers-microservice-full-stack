@@ -1,28 +1,30 @@
-<div class="row justify-content-center" *ngIf="product">
-  <div class="col-md-8">
-    <div class="card shadow">
-      <div class="card-body">
-        <h2 class="card-title">{{product.name}}</h2>
-        <p class="card-text text-muted">{{product.description || 'No description available.'}}</p>
-        <h4 class="text-primary">₹{{product.price}}</h4>
-        <p>
-          <span class="badge" [ngClass]="product.stockQuantity > 0 ? 'bg-success' : 'bg-danger'">
-            {{product.stockQuantity > 0 ? 'In Stock: ' + product.stockQuantity : 'Out of Stock'}}
-          </span>
-        </p>
-        <div class="d-flex gap-2">
-          <button class="btn btn-primary" (click)="addToCart()" [disabled]="product.stockQuantity === 0">
-            Add to Cart
-          </button>
-          <a class="btn btn-outline-secondary" routerLink="/products">Back to Products</a>
-        </div>
-      </div>
+<div *ngIf="loading" class="loading">Loading product details...</div>
+
+<div *ngIf="!loading && error" class="error">{{ error }}</div>
+
+<div *ngIf="!loading && !error && product" class="product-detail-container">
+  <div class="product-image-section">
+    <img
+      [src]="product.imageUrl || 'https://via.placeholder.com/500x400?text=No+Image'"
+      [alt]="product.name"
+      (error)="product.imageUrl = 'https://via.placeholder.com/500x400?text=No+Image'"
+    />
+  </div>
+  <div class="product-info-section">
+    <h1>{{ product.name }}</h1>
+    <p class="category">{{ product.category }}</p>
+    <p class="price">${{ product.price }}</p>
+    <p class="stock" [class.low-stock]="product.stockQuantity < 5">
+      Stock: {{ product.stockQuantity }} available
+    </p>
+    <p class="description">{{ product.description }}</p>
+    <div class="actions">
+      <button (click)="addToCart()" class="btn-cart">Add to Cart</button>
+      <button routerLink="/products" class="btn-back">Back to Products</button>
     </div>
   </div>
 </div>
 
-<div *ngIf="loading" class="text-center py-5">
-  <div class="spinner-border text-primary"></div>
+<div *ngIf="!loading && !error && !product" class="error">
+  Product not found.
 </div>
-
-<div *ngIf="error" class="alert alert-danger">{{error}}</div>
