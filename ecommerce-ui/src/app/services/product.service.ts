@@ -7,7 +7,7 @@ import { Product } from '../models/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private apiUrl = environment.apiUrl + '/products';
+  private apiUrl = environment.apiUrl + '/api/products';
 
   constructor(private http: HttpClient) {}
 
@@ -34,24 +34,6 @@ export class ProductService {
       catchError((error) => {
         console.error('Error creating product:', error);
         return throwError(() => new Error('Failed to create product'));
-      })
-    );
-  }
-
-  updateProduct(id: number, product: Product): Observable<Product> {
-    return this.http.put<Product>(`${this.apiUrl}/${id}`, product).pipe(
-      catchError((error) => {
-        console.error(`Error updating product ${id}:`, error);
-        return throwError(() => new Error('Failed to update product'));
-      })
-    );
-  }
-
-  deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      catchError((error) => {
-        console.error(`Error deleting product ${id}:`, error);
-        return throwError(() => new Error('Failed to delete product'));
       })
     );
   }

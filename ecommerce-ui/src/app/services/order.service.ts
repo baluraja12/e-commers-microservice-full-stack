@@ -7,24 +7,15 @@ import { Order } from '../models/order.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  private apiUrl = environment.apiUrl + '/orders';
+  private apiUrl = environment.apiUrl + '/api/orders';
 
   constructor(private http: HttpClient) {}
 
-  getAllOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(this.apiUrl).pipe(
+  getOrdersByUser(userId: number): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.apiUrl}/user/${userId}`).pipe(
       catchError((error) => {
         console.error('Error fetching orders:', error);
         return throwError(() => new Error('Failed to load orders'));
-      })
-    );
-  }
-
-  getMyOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.apiUrl}/my-orders`).pipe(
-      catchError((error) => {
-        console.error('Error fetching my orders:', error);
-        return throwError(() => new Error('Failed to load my orders'));
       })
     );
   }

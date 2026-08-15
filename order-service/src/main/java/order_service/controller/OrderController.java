@@ -1,5 +1,6 @@
 package order_service.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import order_service.dto.OrderStatusUpdateRequest;
@@ -20,7 +21,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@Valid @RequestBody Order order) {
+    public ResponseEntity<Order> createOrder(@Valid @RequestBody Order order,
+                                             @RequestHeader(value = "X-User-Id", required = false) String userIdHeader) {
+        // If userId not in body, get it from Gateway header
+        if (order.getUserId() == null && userIdHeader != null) {
+            order.setUserId(Long.parseLong(userIdHeader));
+        }
         return new ResponseEntity<>(orderService.createOrder(order), HttpStatus.CREATED);
     }
 
@@ -37,6 +43,14 @@ public class OrderController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Order>> getOrdersByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+    }
+
+    @GetMapping("/my-orders")
+    public ResponseEntity<List<Order>> getMyOrders(@RequestHeader(value = "X-User-Id", required = false) String userIdHeader) {
+        if (userIdHeader == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(orderService.getOrdersByUserId(Long.parseLong(userIdHeader)));
     }
 
     @PatchMapping("/{id}/status")

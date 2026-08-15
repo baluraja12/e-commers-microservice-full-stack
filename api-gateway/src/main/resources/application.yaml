@@ -5,24 +5,32 @@ spring:
   application:
     name: api-gateway
   config:
-    import: "optional:configserver:"   # <-- ADD THIS LINE
+    import: "optional:configserver:"
   cloud:
     config:
-      uri: http://localhost:8888       # <-- ADD THIS LINE (points to your running Config Server)
+      uri: http://localhost:8888
     gateway:
       routes:
         - id: product-service
           uri: lb://product-service
           predicates:
-            - Path=/products/**
+            - Path=/api/products/**
+          filters:
+            - StripPrefix=1
+
         - id: order-service
           uri: lb://order-service
           predicates:
-            - Path=/orders/**
+            - Path=/api/orders/**
+          filters:
+            - StripPrefix=1
+
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/users/**
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
 
 eureka:
   client:

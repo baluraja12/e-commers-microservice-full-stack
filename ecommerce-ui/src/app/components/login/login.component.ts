@@ -25,7 +25,7 @@ export class LoginComponent {
         this.router.navigate(['/products']);
       },
       error: (err) => {
-        this.error = err.error?.error || 'Login failed. Please check your credentials.';
+        this.error = err.error?.error || err.error?.message || 'Login failed. Please check your credentials.';
         this.loading = false;
       }
     });

@@ -11,7 +11,16 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './register.component.html'
 })
 export class RegisterComponent {
-  user = { username: '', email: '', password: '' };
+  user = {
+    username: '',
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    address: '',
+    role: 'CUSTOMER'
+  };
   loading = false;
   error = '';
   success = '';
@@ -27,7 +36,7 @@ export class RegisterComponent {
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Registration failed.';
+        this.error = err.error?.message || err.error?.error || 'Registration failed.';
         this.loading = false;
       }
     });

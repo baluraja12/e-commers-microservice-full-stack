@@ -23,7 +23,16 @@ export class OrdersComponent implements OnInit {
 
   loadOrders(): void {
     this.loading = true;
-    this.orderService.getMyOrders().subscribe({
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userId = currentUser?.userId;
+
+    if (!userId) {
+      this.error = 'Please login to view orders.';
+      this.loading = false;
+      return;
+    }
+
+    this.orderService.getOrdersByUser(userId).subscribe({
       next: (data: Order[]) => {
         this.orders = data;
         this.loading = false;

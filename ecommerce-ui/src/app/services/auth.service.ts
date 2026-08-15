@@ -7,7 +7,7 @@ import { LoginRequest, LoginResponse } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = environment.apiUrl + '/users';
+  private apiUrl = environment.apiUrl + '/api/users';
   private currentUserSubject: BehaviorSubject<LoginResponse | null>;
   public currentUser: Observable<LoginResponse | null>;
 
@@ -33,7 +33,7 @@ export class AuthService {
       }),
       catchError((error) => {
         console.error('Login error:', error);
-        return throwError(() => new Error(error.error?.message || 'Login failed'));
+        return throwError(() => new Error(error.error?.message || error.error?.error || 'Login failed'));
       })
     );
   }
@@ -42,7 +42,7 @@ export class AuthService {
     return this.http.post(this.apiUrl + '/register', user).pipe(
       catchError((error) => {
         console.error('Register error:', error);
-        return throwError(() => new Error(error.error?.message || 'Registration failed'));
+        return throwError(() => new Error(error.error?.message || error.error?.error || 'Registration failed'));
       })
     );
   }

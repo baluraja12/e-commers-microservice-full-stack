@@ -31,14 +31,10 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     private static final String BEARER_PREFIX = "Bearer ";
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    private static final List<String> PUBLIC_PATHS = Arrays.asList(
-            "/api/users/login",
-            "/api/users/register",
-            "/api/products/**",
-            "/api/products",
-            "/eureka/**",
-            "/actuator/**",
-            "/fallback/**"
+            private static final List<String> PUBLIC_PATHS = Arrays.asList(
+        "/api/users/login",
+        "/api/users/register",
+        "/api/products"
     );
 
     @Override

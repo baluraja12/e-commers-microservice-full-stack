@@ -32,6 +32,14 @@ export class OrderCreateComponent implements OnInit {
   placeOrder(): void {
     if (this.cartItems.length === 0) return;
 
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userId = currentUser?.userId;
+
+    if (!userId) {
+      this.error = 'Please login again to place order.';
+      return;
+    }
+
     const orderItems: OrderItem[] = this.cartItems.map(item => ({
       productId: item.product.id!,
       productName: item.product.name,
@@ -41,6 +49,7 @@ export class OrderCreateComponent implements OnInit {
     }));
 
     const order: Order = {
+      userId: userId,
       orderItems: orderItems
     };
 
@@ -55,7 +64,7 @@ export class OrderCreateComponent implements OnInit {
         setTimeout(() => this.router.navigate(['/orders']), 2000);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Failed to place order. Please try again.';
+        this.error = err.error?.message || err.error?.error || 'Failed to place order. Please try again.';
         this.loading = false;
       }
     });
